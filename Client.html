@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>OpenWeatherAPI</title>
+    </head>
+    <body>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <div id="app" style="text-align:center;">
+            <h1>Weather Predictor</h1>
+            <h2><b>Enter the city to see the weather forecast for the upcoming days</b></h2>
+            <br><b>Enter City:</b>
+            <input id="inp" v-model="location" v-on:keyup.enter="checkWeather">
+            <br>
+            <div v-if="umbrella != ' '">
+                {{umbrella}}
+            </div>
+            <div v-if="packfor != ' '">
+                {{packfor}}
+            </div>
+            <br>
+
+            <table border="1px solid black;" align="center">
+                <thead>
+                    <tr>
+                        <th>Date (Time)</th>
+                        <th>Temperature (°C)</th>
+                        <th>Rainfall (mm)</th>
+                        <th>Wind Speed (m/s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="row in forecast">
+                        <td v-for="variable in row">
+                            {{variable}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            var app = new Vue({
+                el: "#app",
+                data: {
+                    location: "",
+                    umbrella: "",
+                    packfor: " ",
+                    forecast: []                
+                },
+                methods: {
+                    checkWeather: checkWeather
+                }
+            });
+
+            function checkWeather() {
+                let p = fetch("weather/" + this.location);
+                p.then(response => response.json())
+                    .then(response => {
+                        this.forecast = response.forecastList;
+                        this.umbrella = response.umbrella;
+                        this.packfor = response.packfor;
+                    });
+            }
+        </script>
+
+        <script src="Server.js"></script>
+    </body>
+</html>
